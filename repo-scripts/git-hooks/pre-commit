@@ -1,0 +1,24 @@
+#!/bin/sh
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+echo "branch = \"$branch\""
+exit 1
+
+#if [ "$branch" == "develop" ]; then
+#  echo "ERROR: You can't commit directly to the develop branch. Please do work on a feature branch."
+#  exit 1
+#fi
+
+#top_level=`git rev-parse --show-toplevel`
+#$top_level/scripts/git-hooks/check_cli_doc.sh
+
+#
+#FLIST=/tmp/visit_git_pre_commit_changed_files_${TXN}.txt
+#if test -n "$TMPDIR"; then
+#    FLIST=$TMPDIR/visit_git_pre_commit_changed_files_${TXN}.txt
+#fi
+
+#git log --name-status --diff-filter='[A|C|D|M|R|T]' -U 3
+
+#./count_tabs.sh
