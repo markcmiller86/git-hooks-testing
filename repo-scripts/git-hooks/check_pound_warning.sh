@@ -33,6 +33,7 @@ while read fline; do
     # Get file 'svnlook' status and name
     #
     fstat=`echo $fline | tr -s ' ' | cut -d' ' -f1`
+    fstat=${fstat:0:1}
     fname=`echo $fline | tr -s ' ' | cut -d' ' -f2`
 
     #
@@ -56,7 +57,7 @@ while read fline; do
             ;;
     esac
 
-    svnlook cat -t $TXN $REPOS $fname | grep -q '^#warning' 1>/dev/null 2>&1
+    git show :$fname | grep -q '^#warning' 1>/dev/null 2>&1
     commitFileHasPoundWarnings=$?
 
     # If the file we're committing has #warnings, reject it
