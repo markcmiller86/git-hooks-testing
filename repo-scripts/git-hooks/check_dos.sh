@@ -56,9 +56,9 @@ FLIST="$3"
 #
 # Create a temp file containing the ctrl char(s) we wan't to grep for
 #
-ctrlCharFile=/tmp/visit_svn_hook_ctrl_M_char_$$.txt
+ctrlCharFile=/tmp/visit_git_hook_ctrl_M_char_$$.txt
 if test -n "$TMPDIR"; then
-    ctrlCharFile=$TMPDIR/visit_svn_hook_ctrl_M_char_$$.txt
+    ctrlCharFile=$TMPDIR/visit_git_hook_ctrl_M_char_$$.txt
 fi
 echo -e '\r' > $ctrlCharFile
 
@@ -68,9 +68,10 @@ echo -e '\r' > $ctrlCharFile
 while read fline; do
 
     #
-    # Get file 'svnlook' status and name
+    # Get file status and name
     #
     fstat=`echo $fline | tr -s ' ' | cut -d' ' -f1` 
+    fstat=${fstat:0:1}
     fname=`echo $fline | tr -s ' ' | cut -d' ' -f2` 
 
     #
@@ -143,7 +144,7 @@ while read fline; do
     #
     # Using svnlook to cat the file and examine it for ctrl chars.
     #
-    svnlook cat -t $TXN $REPOS $fname | grep -q -f $ctrlCharFile 1>/dev/null 2>&1
+    git show :$fname | grep -q -f $ctrlCharFile 1>/dev/null 2>&1
     commitFileHasCtrlChars=$?
 
     # If the file we're committing has ctrl chars, reject it
