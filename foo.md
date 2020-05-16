@@ -5,3 +5,4 @@ A temporary repo to play with git hooks
 This is an odd line
 
 This is another line.
+
