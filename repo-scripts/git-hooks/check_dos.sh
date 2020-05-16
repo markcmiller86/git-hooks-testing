@@ -61,7 +61,7 @@ if test -n "$TMPDIR"; then
     ctrlCharFile=$TMPDIR/visit_git_hook_ctrl_M_char_$$.txt
 fi
 if [[ -z "$(uname -a | grep -i darwin)" ]]; then
-    echo '\r' > $ctrlCharFile
+    echo -e '\r' > $ctrlCharFile
 else
     echo '\x0d' > $ctrlCharFile
 fi
