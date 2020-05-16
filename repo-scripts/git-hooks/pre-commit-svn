@@ -22,12 +22,15 @@
 #   command here, to output BOTH file status chars and file names
 #   to the FLIST file. Removed check_gpl.sh hook.
 #
+#   Mark C. Miller, Fri May 15 14:50:29 PDT 2020
+#   Adapted to run as a git-hook
+#
 
 #
 # Set input parameters
 #
-REPOS="$1"
-TXN="$2"
+REPOS="$(git rev-parse --show-toplevel)/repo-scripts/git-hooks"
+TXN=$$
 
 #
 # Construct temp. file name to be populated with information
@@ -37,11 +40,6 @@ FLIST=/tmp/visit_svn_pre_commit_changed_files_${TXN}.txt
 if test -n "$TMPDIR"; then
     FLIST=$TMPDIR/visit_svn_pre_commit_changed_files_${TXN}.txt
 fi
-
-#
-# Setup variables/functions common to many hook scripts
-#
-source ${REPOS}/hooks/hook_common.sh
 
 #
 # Check that we have valid input parameters
@@ -55,10 +53,15 @@ if [ -z "${TXN}" ]; then
     exit 1
 fi
 
+#
+# Setup variables/functions common to many hook scripts
+#
+source ${REPOS}/hook_common.sh
+
 function runhook_sh()
 {
    TEST="$@"
-   sh ${REPOS}/hooks/${TEST} ${REPOS} ${TXN} ${FLIST}
+   sh ${REPOS}/${TEST} ${REPOS} ${TXN} ${FLIST}
    if [ $? != 0 ]; then
       rm -f ${FLIST}
       exit 1
@@ -67,7 +70,7 @@ function runhook_sh()
 function runhook_py()
 {
    TEST="$@"
-   python ${REPOS}/hooks/${TEST} ${REPOS} ${TXN} ${FLIST}
+   python ${REPOS}/${TEST} ${REPOS} ${TXN} ${FLIST}
    if [ $? != 0 ]; then
       rm -f ${FLIST}
       exit 1
@@ -76,7 +79,7 @@ function runhook_py()
 function runhook_pl()
 {
    TEST="$@"
-   perl ${REPOS}/hooks/${TEST} ${REPOS} ${TXN} ${FLIST}
+   perl ${REPOS}/${TEST} ${REPOS} ${TXN} ${FLIST}
    if [ $? != 0 ]; then
       exit 1
    fi
@@ -86,7 +89,7 @@ function runhook_pl()
 # Populate ${FLIST} file with list of files being changed (and
 # their status chars) in this commit.
 #
-svnlook changed -t $TXN $REPOS > ${FLIST}
+git diff --cached --name-status > ${FLIST}
 
 # Unfortunately we want something more warning-esque, which isn't quite
 # possible with subversion's hooks.
@@ -100,19 +103,19 @@ svnlook changed -t $TXN $REPOS > ${FLIST}
 runhook_sh "count_tabs.sh"
 
 # Check for possible dos file format
-runhook_sh "check_dos.sh"
+#runhook_sh "check_dos.sh"
 
 # Check for #warning compiler directives
-runhook_sh "check_pound_warning.sh"
+#runhook_sh "check_pound_warning.sh"
 
 # Check for abort/exit calls 
-runhook_sh "check_abort_calls.sh"
+#runhook_sh "check_abort_calls.sh"
 
 # Check for using statements in header files
-runhook_sh "check_using_stmts.sh"
+#runhook_sh "check_using_stmts.sh"
 
 # Check for clases in filename case
-runhook_pl "check-case-clashes.pl"
+#runhook_pl "check-case-clashes.pl"
 
 # Clean up
 rm -f ${FLIST}

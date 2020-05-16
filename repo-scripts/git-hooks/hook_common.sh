@@ -15,7 +15,9 @@
 #
 #   Tom Fogal, Sat May 16 14:55:06 MDT 2009
 #   Don't do any checks for third_party files.
-
+#
+#   Mark C. Miller, Fri May 15 15:06:15 PDT 2020
+#   Adapted to be used as a git hook
 
 export PATH=/bin:/usr/bin
 export VISIT_GROUP_NAME=visitdev
@@ -30,7 +32,7 @@ export -f log
 
 #
 # Determine if a given file can be skipped by hooks
-# based on its status as given by svnlook, whether
+# based on its status, whether
 # it contains a trailing slash ('/') character
 # indicating its a directory and whether it is a text
 # file or not.
@@ -64,19 +66,6 @@ function HandleCommonSkipCases()
     #
     if test ${2:${#2}-1:1} = /; then
         return 0
-    fi
-
-    #
-    # Only do this check for files svn thinks are 'text' files
-    #
-    hasMimeTypeProp=`svnlook proplist -t $TXN $REPOS $2 | grep mime-type`
-    if test -n "$hasMimeTypeProp"; then
-        mimeTypeProp=`svnlook propget -t $TXN $REPOS svn:mime-type $2`
-        if test -n "$mimeTypeProp"; then
-            if test -z "`echo $mimeTypeProp | grep ^text/`"; then
-                return 0
-            fi
-        fi
     fi
 
     return 1

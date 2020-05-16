@@ -76,6 +76,9 @@
 #
 #   Kathleen Biagas, Fri Jun  6 11:51:17 PDT 2014
 #   Add simV2_wrap.cxx, as it is a generated file.
+#
+#   Mark C. Miller, Fri May 15 20:12:57 PDT 2020
+#   Adapt for git
 ##############################################################################
 REPOS="$1"
 TXN="$2"
@@ -88,6 +91,13 @@ while read fline; do
     #
     fstat=`echo $fline | tr -s ' ' | cut -d' ' -f1`
     fname=`echo $fline | tr -s ' ' | cut -d' ' -f2`
+
+    #
+    # Tab counting logic only needed for certain kinds of changes
+    #
+    if test $fstat = C -o $fstat = R -o $fstat = T; then
+        continue
+    fi
 
     #
     # Skip common cases of deletions, dirs, non-text files
@@ -142,7 +152,7 @@ while read fline; do
     # The -c -d flags on tr here cause deletion of every character
     # that is NOT a tab. What is left over is tab characters and we
     # simply count them with wc.
-    commitFileTabCount=`svnlook cat -t $TXN $REPOS $fname | tr -c -d '\t' | wc -m`
+    commitFileTabCount=`git show :$fname | tr -c -d '\t' | wc -m`
 
     #
     # If the file we're committing has tabs, we have some additional
@@ -164,7 +174,7 @@ while read fline; do
         # number of tabs in the file as it already exists in the repo is
         # not less than the number of tabs in the file being committed.
         #
-        repoFileTabCount=`svnlook cat $REPOS $fname | tr -c -d '\t' | wc -m`
+        repoFileTabCount=`git show HEAD~1:$fname | tr -c -d '\t' | wc -m`
         if test $commitFileTabCount -gt $repoFileTabCount; then
             log "In a file you are commiting, \"$fname\", you have increased "
             log "the number of tabs from $repoFileTabCount to $commitFileTabCount."
