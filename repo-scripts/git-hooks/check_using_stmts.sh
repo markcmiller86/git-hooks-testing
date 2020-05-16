@@ -21,6 +21,7 @@ while read fline; do
     # Get file 'svnlook' status and name
     #
     fstat=`echo $fline | tr -s ' ' | cut -d' ' -f1`
+    fstat=${fstat:0:1}
     fname=`echo $fline | tr -s ' ' | cut -d' ' -f2`
 
     #
@@ -43,15 +44,9 @@ while read fline; do
         */windowsbuild/*)
             continue
             ;;
-        trunk/src/*.h|branches/*/src/*.h)
-            # Do not skip (continue) these
-            ;;
-        *)
-            continue
-            ;;
     esac
 
-    svnlook cat -t $TXN $REPOS $fname | grep -q '^\( *using *std::\)\|\( *using *namespace\)' 1>/dev/null 2>&1
+    git show :$fname | grep -q '^\( *using *std::\)\|\( *using *namespace\)' 1>/dev/null 2>&1
     commitHeaderFileHasUsingStatements=$?
 
     # If the file we're committing has #warnings, reject it
