@@ -57,7 +57,7 @@ while read fline; do
             ;;
     esac
 
-    git show :$fname | grep -q '^#warning' 1>/dev/null 2>&1
+    git show :$fname | grep -q '^#\s*warning' 1>/dev/null 2>&1
     commitFileHasPoundWarnings=$?
 
     # If the file we're committing has #warnings, reject it
