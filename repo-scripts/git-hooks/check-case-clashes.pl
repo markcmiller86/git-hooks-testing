@@ -92,7 +92,7 @@ $minkey = dirname($minkey);
 # itself. However, it maybe that something in this commit has a clash conflict
 # with the current state of the repository. So, check that next.
 #
-my @treelist = `svnlook tree --full-paths $REPOS $minkey`;
+my @treelist = `git ls-tree --name-only --full-name -r HEAD $minkey`;
 my %repodirs;
 foreach my $line (@treelist) {
     chomp($line);
