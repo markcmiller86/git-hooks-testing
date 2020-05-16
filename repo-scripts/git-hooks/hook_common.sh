@@ -54,7 +54,7 @@ function HandleCommonSkipCases()
     #
     # third_party is a free for all.
     #
-    echo "$2" | /bin/grep "third_party" >/dev/null
+    echo "$2" | grep "third_party" >/dev/null
     if test $? -eq 0; then
       return 0
     fi
