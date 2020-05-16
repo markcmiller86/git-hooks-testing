@@ -30,6 +30,7 @@ while read fline; do
     # Get file 'svnlook' status and name
     #
     fstat=`echo $fline | tr -s ' ' | cut -d' ' -f1`
+    fstat=${fstat:0:1}
     fname=`echo $fline | tr -s ' ' | cut -d' ' -f2`
 
     #
@@ -54,7 +55,6 @@ while read fline; do
         */src/bin/internallauncher|\
         */src/resources/hosts/*/customlauncher|\
         */src/bin/*.py|\
-        */src/svn_bin/*|\
         */windowsbuild/*)
             # Skip these files and directories
             continue
@@ -63,16 +63,12 @@ while read fline; do
         trunk/*)
             # Do not skip (continue) these
             ;;
-        *)
-            # Skip anything not on trunk
-            continue
-            ;;
     esac
 
-    svnlook cat -t $TXN $REPOS $fname | grep -v '^#[[:space:]]*include' | grep -v HOOKS_IGNORE | cpp - 2>&1 | grep -q '[[:space:]]\(abort\|exit\)[[:space:]]*(' 1>/dev/null 2>&1
+    git show :$fname | grep -v '^#[[:space:]]*include' | grep -v HOOKS_IGNORE | cpp - 2>&1 | grep -q '[[:space:]]\(abort\|exit\)[[:space:]]*(' 1>/dev/null 2>&1
     commitFileAbortCalls=$?
     if test $commitFileAbortCalls -ne 0; then
-        svnlook cat -t $TXN $REPOS $fname | grep -v '^#[[:space:]]*include' | grep -v HOOKS_IGNORE | cpp -DPARALLEL - 2>&1 | grep -q '[[:space:]]\(abort\|exit\)[[:space:]]*(' 1>/dev/null 2>&1
+        git show :$fname | grep -v '^#[[:space:]]*include' | grep -v HOOKS_IGNORE | cpp -DPARALLEL - 2>&1 | grep -q '[[:space:]]\(abort\|exit\)[[:space:]]*(' 1>/dev/null 2>&1
         commitFileAbortCalls=$?
     fi
 

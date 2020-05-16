@@ -59,6 +59,11 @@ function HandleCommonSkipCases()
       return 0
     fi
 
+    echo "$2" | grep "repo-scripts/git-hooks" >/dev/null
+    if test $? -eq 0; then
+      return 0
+    fi
+
     #
     # Skip entries which are the names of directories.
     # This logic checks if the last character of the entry
