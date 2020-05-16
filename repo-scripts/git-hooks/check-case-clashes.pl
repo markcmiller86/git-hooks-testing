@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -d
 
 use File::Basename;
 
@@ -15,6 +15,7 @@ while (<$flistfile>) {
     push @flist, $_;
 }
 close($flistfile);
+print @flist;
 
 #
 # build hash of dirnames and files in those dirs that are being
@@ -30,12 +31,12 @@ foreach my $line (@flist) {
         push @{ $udirs{$dname} }, $bname;
     }
 }
+print %udirs;
+
 # If nothing is being added, we're done
 if (!%udirs) {
     exit 0;
 }
-
-
 
 #
 # First pass to check that nothing *within* this commit
@@ -86,6 +87,7 @@ foreach my $key (sort(keys %udirs)) {
 }
 # back up on more directory
 $minkey = dirname($minkey);
+print $minkey;
 
 #
 # If we made it this far, nothing *within* this commit has a clash conflict with
@@ -93,6 +95,7 @@ $minkey = dirname($minkey);
 # with the current state of the repository. So, check that next.
 #
 my @treelist = `git ls-tree --name-only --full-name -r HEAD $minkey`;
+print @treelist;
 my %repodirs;
 foreach my $line (@treelist) {
     chomp($line);
@@ -100,6 +103,7 @@ foreach my $line (@treelist) {
     my $dname = dirname($line);
     push @{ $repodirs{$dname} }, $bname;
 }
+print %repodirs;
 
 #
 # Compare the files we're adding in this commit with all the stuff we
@@ -116,6 +120,7 @@ while (my ($k,$v)=each %udirs) {
         }
     }
 }
+print %clashes;
 
 if (%clashes)
 {
