@@ -48,13 +48,6 @@ while read fline; do
             # Skip anything in windowsbuild
             continue
             ;;
-        trunk/*)
-            # Do not skip (continue) these
-            ;;
-        *)
-            # Skip anything not on trunk
-            continue
-            ;;
     esac
 
     git show :$fname | grep -q '^#\s*warning' 1>/dev/null 2>&1
