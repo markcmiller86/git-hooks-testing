@@ -91,8 +91,6 @@ function runhook_pl()
 #
 git diff --cached --name-status --diff-filter=ACDMRT > ${FLIST}
 
-cat ${FLIST}
-
 # Unfortunately we want something more warning-esque, which isn't quite
 # possible with subversion's hooks.
 #runhook_sh "verify_versioning.sh"
