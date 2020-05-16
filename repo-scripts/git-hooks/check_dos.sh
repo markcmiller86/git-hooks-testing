@@ -60,7 +60,11 @@ ctrlCharFile=/tmp/visit_git_hook_ctrl_M_char_$$.txt
 if test -n "$TMPDIR"; then
     ctrlCharFile=$TMPDIR/visit_git_hook_ctrl_M_char_$$.txt
 fi
-echo  '\x0d' > $ctrlCharFile
+if [[ -z "$(uname -a | grep -i darwin)" ]]; then
+    echo '\r' > $ctrlCharFile
+else
+    echo '\x0d' > $ctrlCharFile
+fi
 
 #
 # Iterate over the list of files
