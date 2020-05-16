@@ -15,7 +15,7 @@ while (<$flistfile>) {
     push @flist, $_;
 }
 close($flistfile);
-print @flist;
+print "flist...\n", @flist, "\n";
 
 #
 # build hash of dirnames and files in those dirs that are being
@@ -31,7 +31,7 @@ foreach my $line (@flist) {
         push @{ $udirs{$dname} }, $bname;
     }
 }
-print %udirs;
+print "udirs...\n", %udirs, "\n";
 
 # If nothing is being added, we're done
 if (!%udirs) {
@@ -57,6 +57,7 @@ while (my ($k,$v)=each %udirs) {
         }
     }
 }
+print "clashes (first pass)...\n", %clashes, "\n";
 
 my $msg;
 if (%clashes)
@@ -87,7 +88,7 @@ foreach my $key (sort(keys %udirs)) {
 }
 # back up on more directory
 $minkey = dirname($minkey);
-print $minkey;
+print "minkey = ", $minkey, "\n";
 
 #
 # If we made it this far, nothing *within* this commit has a clash conflict with
@@ -95,7 +96,7 @@ print $minkey;
 # with the current state of the repository. So, check that next.
 #
 my @treelist = `git ls-tree --name-only --full-name -r HEAD $minkey`;
-print @treelist;
+print "treelist...\n", @treelist, "\n";
 my %repodirs;
 foreach my $line (@treelist) {
     chomp($line);
@@ -103,7 +104,7 @@ foreach my $line (@treelist) {
     my $dname = dirname($line);
     push @{ $repodirs{$dname} }, $bname;
 }
-print %repodirs;
+print "repodirs...\n", %repodirs, "\n";
 
 #
 # Compare the files we're adding in this commit with all the stuff we
@@ -112,7 +113,9 @@ print %repodirs;
 while (my ($k,$v)=each %udirs) {
     foreach $fc (@{$v}) {
         foreach $fr (@{$repodirs{$k}}) {
+            print "comparing ", $fc, " and ", $fr, "\n";
             if (lc($fc) eq lc($fr)) {
+                print "    got a hit!\n";
                 my $clashkey = "$k/$fc";
                 my $clashval = "$k/$fr";
                 push @{ $clashes{$clashkey} }, $clashval;
@@ -120,7 +123,7 @@ while (my ($k,$v)=each %udirs) {
         }
     }
 }
-print %clashes;
+print "clashes (second pass)...\n", %clashes, "\n";
 
 if (%clashes)
 {

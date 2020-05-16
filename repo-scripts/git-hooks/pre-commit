@@ -89,7 +89,7 @@ function runhook_pl()
 # Populate ${FLIST} file with list of files being changed (and
 # their status chars) in this commit.
 #
-git diff --cached --name-status --diff-filter=ACDMRT > ${FLIST}
+git diff --cached --name-status --diff-filter=ACDMRT | tr '\t' ' ' | tr -s ' ' > ${FLIST}
 
 # Unfortunately we want something more warning-esque, which isn't quite
 # possible with subversion's hooks.
