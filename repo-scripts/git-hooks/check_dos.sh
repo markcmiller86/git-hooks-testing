@@ -60,7 +60,7 @@ ctrlCharFile=/tmp/visit_git_hook_ctrl_M_char_$$.txt
 if test -n "$TMPDIR"; then
     ctrlCharFile=$TMPDIR/visit_git_hook_ctrl_M_char_$$.txt
 fi
-echo -e '\r' > $ctrlCharFile
+echo  '\x0d' > $ctrlCharFile
 
 #
 # Iterate over the list of files
